@@ -1,12 +1,30 @@
+/**
+ * @module httpu-core
+ * This module provides the HttpuCore class for handling HTTPU requests.
+ */
+
 import dgram from 'node:dgram';
 
+/**
+ * HttpuCore class for handling HTTPU requests.
+ */
 export default class HttpuCore {
+  /** @readonly */
   readonly method: string;
+  /** @readonly @private */
   readonly #url: URL;
+  /** @type {string | undefined} */
   body: string | undefined;
 
+  /** @readonly */
   readonly headers: Headers;
 
+  /**
+   * Creates an instance of HttpuCore.
+   * @param {string | URL} url - The URL for the request.
+   * @param {string} [method="NOTIFY"] - The HTTP method for the request.
+   * @throws {Error} If the URL is invalid.
+   */
   constructor(url: string | URL, method: string = "NOTIFY") {
     this.#url = new URL(url);
     if (this.#url.protocol !== this._defaultProtocol
@@ -25,32 +43,21 @@ export default class HttpuCore {
     });
   }
 
+  /**
+   * Gets the default path.
+   * @protected
+   * @returns {string} The default path.
+   */
   protected get _defaultPath(): string {
     return '/';
   }
 
+  /**
+   * Gets the default protocol.
+   * @protected
+   * @returns {string} The default protocol.
+   */
   protected get _defaultProtocol(): string {
     return 'httpu:';
-  }
-
-  send() {
-    const port = (this.#url.port !== "") ? +this.#url.port : 1900;
-    const client = dgram.createSocket('udp4');
-    client.bind(0, () => {
-      client.setBroadcast(true);
-      client.send(this.toString(), port, this.#url.hostname, (err) => {
-        if (err) {
-          console.error(err);
-        }
-        client.close();
-      });
-    });
-  }
-
-  toString(): string {
-    const pathname = (this.#url.pathname !== "") ? this.#url.pathname : this._defaultPath;
-    const headers = [...this.headers.entries()].map(([key, value]) => `${key.toUpperCase()}: ${value}`).join('\r\n');
-    const body = (typeof this.body !== 'undefined') ? this.body : '';
-    return `${this.method} ${pathname} HTTP/1.1\r\n${headers}\r\n${body}`;
   }
 }
