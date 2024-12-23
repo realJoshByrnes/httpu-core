@@ -43,7 +43,7 @@ export default class HttpuCore {
     });
   }
 
-  toString() {
+  toString(): string {
     const pathname = (this.#url.pathname !== "") ? this.#url.pathname : this._defaultPath;
     const headers = [...this.headers.entries()].map(([key, value]) => `${key.toUpperCase()}: ${value}`).join('\r\n');
     const body = (typeof this.body !== 'undefined') ? this.body : '';
