@@ -9,7 +9,7 @@ export default class HttpuCore {
 
   constructor(url: string | URL, method: string = "NOTIFY") {
     this.#url = new URL(url);
-    if (this.#url.protocol !== "httpu:"
+    if (this.#url.protocol !== this._defaultProtocol
       || this.#url.username !== ""
       || this.#url.password !== ""
       || this.#url.search !== ""
@@ -27,6 +27,10 @@ export default class HttpuCore {
 
   protected get _defaultPath(): string {
     return '/';
+  }
+
+  protected get _defaultProtocol(): string {
+    return 'httpu:';
   }
 
   send() {
